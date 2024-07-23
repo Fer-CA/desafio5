@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
-const { serverLog } = require("./serverLog.middleware");
-const { getJoyas, getJoyasFilter } = require("./src/utils/consult");
+const { serverLog } = require("./src/serveLog.middleware");
+const { getJoyas, getJoyasFilter } = require("./src/utils/consult.js");
 const app = express();
 
 const port = process.env.PORT || 3000;

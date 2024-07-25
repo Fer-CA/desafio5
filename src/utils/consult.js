@@ -1,28 +1,29 @@
 const { pool } = require("../db/config");
 const format = require('pg-format');
 
-const prepararHATEOAS = (joyas) => {
+const prepararHATEOAS = (arreglo) => {
     let totalStock = 0;
-    const results = joyas.map((j) => {
-        totalStock += +j.stock;
+    const results = arreglo.map((objeto) => {
+        totalStock += +objeto.stock;
         return {
-            name: j.nombre,
-            href: `/joyas/joya/${j.id}`,
+            name: objeto.nombre,
+            href: `http://localhost:3000/joyas/joya/${objeto.id}`,
         };
     });
 
     return {
-        total: joyas.length,
+        total: arreglo.length,
+        totalStock, // Incluimos el totalStock calculado
         results
     };
-}
+};
 
 const getJoyas = async ({ limits = 5, orderBy = "precio_DESC", page = 1 }) => {
     try {
         let query = "SELECT * FROM joyas";
         const [column, sort] = orderBy.split("_");
         const offset = (page > 0 ? page - 1 : 0) * limits;
-        const formattedQuery = format(`${query} ORDER BY %I %s LIMIT %L OFFSET %L;`, column, sort, limits, offset);
+        const formattedQuery = format(`${query} ORDER BY %s %s LIMIT %s OFFSET %s;`, column, sort, limits, offset);
         const { rows } = await pool.query(formattedQuery);
         return prepararHATEOAS(rows);
     } catch (error) {
@@ -63,7 +64,7 @@ const getJoyasFilter = async ({ limits = 5, orderBy = "precio_DESC", page = 1, s
 
         const [column, sort] = orderBy.split("_");
         const offset = (page > 0 ? page - 1 : 0) * limits;
-        const formattedQuery = format(`${query} ORDER BY %I %s LIMIT %L OFFSET %L;`, column, sort, limits, offset);
+        const formattedQuery = format(`${query} ORDER BY %s %s LIMIT %s OFFSET %s;`, column, sort, limits, offset);
         const { rows } = await pool.query(formattedQuery, values);
         return prepararHATEOAS(rows);
     } catch (error) {
